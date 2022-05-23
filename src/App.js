@@ -1,13 +1,28 @@
+import React from 'react';
 import Card from './components/Card';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
 
+const arr = [
+	{
+		title: 'Мужские туфли wholecuts Berwick',
+		price: 16790,
+		imageUrl: '/img/shoes/1.jpg',
+	},
+	{
+		title: 'Мужские туфли saddle Alden Sheppard Street',
+		price: 15600,
+		imageUrl: '/img/shoes/2.jpg',
+	},
+];
+
 function App() {
+	const [cartOpened, setCartOpened] = React.useState(false);
+
 	return (
 		<div className='wrapper clear'>
-			<Drawer />
-
-			<Header />
+			{cartOpened && <Drawer onClose={() => setCartOpened(false)} />}
+			<Header onClickCart={() => setCartOpened(true)} />
 			<div className='content p-40'>
 				<div className='d-flex align-center justify-between mb-40'>
 					<h1>Все туфли</h1>
@@ -18,46 +33,15 @@ function App() {
 				</div>
 
 				<div className='d-flex'>
-					<Card />
-					<div className='card'>
-						<img width={133} height={112} src='/img/shoes/1.jpg' alt='shoes' />
-						<h5>Мужские туфли</h5>
-						<div className='d-flex justify-between align-center'>
-							<div>
-								<p>Цена:</p>
-								<b>1 999 руб.</b>
-							</div>
-							<button className='button'>
-								<img width={11} height={11} src='/img/plus.svg' alt='plus' />
-							</button>
-						</div>
-					</div>
-					<div className='card'>
-						<img width={133} height={112} src='/img/shoes/1.jpg' alt='shoes' />
-						<h5>Мужские туфли</h5>
-						<div className='d-flex justify-between align-center'>
-							<div>
-								<p>Цена:</p>
-								<b>1 999 руб.</b>
-							</div>
-							<button className='button'>
-								<img width={11} height={11} src='/img/plus.svg' alt='plus' />
-							</button>
-						</div>
-					</div>
-					<div className='card'>
-						<img width={133} height={112} src='/img/shoes/1.jpg' alt='shoes' />
-						<h5>Мужские туфли</h5>
-						<div className='d-flex justify-between align-center'>
-							<div>
-								<p>Цена:</p>
-								<b>1 999 руб.</b>
-							</div>
-							<button className='button'>
-								<img width={11} height={11} src='/img/plus.svg' alt='plus' />
-							</button>
-						</div>
-					</div>
+					{arr.map((obj) => (
+						<Card
+							title={obj.title}
+							price={obj.price}
+							imageUrl={obj.imageUrl}
+							onFavorite={() => console.log('Добавили в закладки')}
+							onPlus={() => console.log('Нажали плюс')}
+						/>
+					))}
 				</div>
 			</div>
 		</div>
