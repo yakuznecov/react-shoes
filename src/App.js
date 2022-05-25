@@ -3,21 +3,19 @@ import Card from './components/Card';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
 
-const arr = [
-	{
-		title: 'Мужские туфли wholecuts Berwick',
-		price: 16790,
-		imageUrl: '/img/shoes/1.jpg',
-	},
-	{
-		title: 'Мужские туфли saddle Alden Sheppard Street',
-		price: 15600,
-		imageUrl: '/img/shoes/2.jpg',
-	},
-];
-
 function App() {
+	const [items, setItems] = React.useState([]);
 	const [cartOpened, setCartOpened] = React.useState(false);
+
+	React.useEffect(() => {
+		fetch('https://628d1815a3fd714fd03f0553.mockapi.io/items')
+			.then((res) => {
+				return res.json();
+			})
+			.then((json) => {
+				setItems(json);
+			});
+	}, []);
 
 	return (
 		<div className='wrapper clear'>
@@ -32,8 +30,8 @@ function App() {
 					</div>
 				</div>
 
-				<div className='d-flex'>
-					{arr.map((obj) => (
+				<div className='d-flex flex-wrap'>
+					{items.map((obj) => (
 						<Card
 							title={obj.title}
 							price={obj.price}
