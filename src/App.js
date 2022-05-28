@@ -1,47 +1,60 @@
 import React from 'react';
-import Card from './components/Card';
+import axios from 'axios';
+import { Route } from 'react-router-dom';
+import Home from './pages/Home';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
 
 function App() {
 	const [items, setItems] = React.useState([]);
+	const [cartItems, setСartItems] = React.useState([]); // хранение товаров в корзине
+	const [favorites, setFavorites] = React.useState([]); // хранение данных об избранном
+	const [searchValue, setSearchValue] = React.useState(''); // хранение данных из инпута поиска
 	const [cartOpened, setCartOpened] = React.useState(false);
 
 	React.useEffect(() => {
-		fetch('https://628d1815a3fd714fd03f0553.mockapi.io/items')
-			.then((res) => {
-				return res.json();
-			})
-			.then((json) => {
-				setItems(json);
-			});
+		axios.get('https://628d1815a3fd714fd03f0553.mockapi.io/items').then((res) => {
+			setItems(res.data);
+		});
+		axios.get('https://628d1815a3fd714fd03f0553.mockapi.io/cart').then((res) => {
+			setСartItems(res.data);
+		});
 	}, []);
+
+	const onAddToCart = (obj) => {
+		axios.post('https://628d1815a3fd714fd03f0553.mockapi.io/cart', obj);
+		setСartItems((prev) => [...prev, obj]);
+	};
+
+	const onRemoveItem = (id) => {
+		axios.delete(`https://628d1815a3fd714fd03f0553.mockapi.io/cart/${id}`);
+		setСartItems((prev) => prev.filter((item) => item.id !== id));
+	};
+
+	const onAddToFavorite = (obj) => {
+		axios.post('https://628d1815a3fd714fd03f0553.mockapi.io/favorites', obj);
+		setFavorites((prev) => [...prev, obj]);
+	};
+
+	const onChangeSearchInput = (event) => {
+		setSearchValue(event.target.value);
+	};
 
 	return (
 		<div className='wrapper clear'>
-			{cartOpened && <Drawer onClose={() => setCartOpened(false)} />}
+			{cartOpened && <Drawer items={cartItems} onClose={() => setCartOpened(false)} onRemove={onRemoveItem} />}
 			<Header onClickCart={() => setCartOpened(true)} />
-			<div className='content p-40'>
-				<div className='d-flex align-center justify-between mb-40'>
-					<h1>Все туфли</h1>
-					<div className='search-block d-flex'>
-						<img src='/img/search.svg' alt='search' />
-						<input placeholder='Поиск...' />
-					</div>
-				</div>
-
-				<div className='d-flex flex-wrap'>
-					{items.map((obj) => (
-						<Card
-							title={obj.title}
-							price={obj.price}
-							imageUrl={obj.imageUrl}
-							onFavorite={() => console.log('Добавили в закладки')}
-							onPlus={() => console.log('Нажали плюс')}
-						/>
-					))}
-				</div>
-			</div>
+			<Route path='/' exact>
+				<Home
+					items={items}
+					cartItems={cartItems}
+					searchValue={searchValue}
+					setSearchValue={setSearchValue}
+					onChangeSearchInput={onChangeSearchInput}
+					onAddToFavorite={onAddToFavorite}
+					onAddToCart={onAddToCart}
+				></Home>
+			</Route>
 		</div>
 	);
 }
