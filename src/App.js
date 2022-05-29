@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import { Route } from 'react-router-dom';
+import axios from 'axios';
 import Home from './pages/Home';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
@@ -44,17 +44,18 @@ function App() {
 		<div className='wrapper clear'>
 			{cartOpened && <Drawer items={cartItems} onClose={() => setCartOpened(false)} onRemove={onRemoveItem} />}
 			<Header onClickCart={() => setCartOpened(true)} />
-			<Route path='/' exact>
-				<Home
-					items={items}
-					cartItems={cartItems}
-					searchValue={searchValue}
-					setSearchValue={setSearchValue}
-					onChangeSearchInput={onChangeSearchInput}
-					onAddToFavorite={onAddToFavorite}
-					onAddToCart={onAddToCart}
-				></Home>
-			</Route>
+
+			<Route path='/' exact></Route>
+
+			<Home
+				items={items}
+				cartItems={cartItems}
+				searchValue={searchValue}
+				setSearchValue={setSearchValue}
+				onChangeSearchInput={onChangeSearchInput}
+				onAddToFavorite={onAddToFavorite}
+				onAddToCart={onAddToCart}
+			/>
 		</div>
 	);
 }
