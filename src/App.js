@@ -2,6 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import axios from 'axios';
 import Home from './pages/Home';
+import Favorites from './pages/Favorites';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
 
@@ -19,6 +20,9 @@ function App() {
 		axios.get('https://628d1815a3fd714fd03f0553.mockapi.io/cart').then((res) => {
 			setСartItems(res.data);
 		});
+		axios.get('https://628d1815a3fd714fd03f0553.mockapi.io/favorites').then((res) => {
+			setFavorites(res.data);
+		});
 	}, []);
 
 	const onAddToCart = (obj) => {
@@ -31,9 +35,14 @@ function App() {
 		setСartItems((prev) => prev.filter((item) => item.id !== id));
 	};
 
-	const onAddToFavorite = (obj) => {
-		axios.post('https://628d1815a3fd714fd03f0553.mockapi.io/favorites', obj);
-		setFavorites((prev) => [...prev, obj]);
+	const onAddToFavorite = async (obj) => {
+		if (favorites.find((favObj) => favObj.id === obj.id)) {
+			axios.delete(`https://628d1815a3fd714fd03f0553.mockapi.io/favorites/${obj.id}`);
+			// setFavorites((prev) => prev.filter((item) => item.id !== obj.id));
+		} else {
+			const { data } = await axios.post('https://628d1815a3fd714fd03f0553.mockapi.io/favorites', obj);
+			setFavorites((prev) => [...prev, data]);
+		}
 	};
 
 	const onChangeSearchInput = (event) => {
@@ -45,17 +54,21 @@ function App() {
 			{cartOpened && <Drawer items={cartItems} onClose={() => setCartOpened(false)} onRemove={onRemoveItem} />}
 			<Header onClickCart={() => setCartOpened(true)} />
 
-			<Route path='/' exact></Route>
+			<Route path='/' exact>
+				<Home
+					items={items}
+					cartItems={cartItems}
+					searchValue={searchValue}
+					setSearchValue={setSearchValue}
+					onChangeSearchInput={onChangeSearchInput}
+					onAddToFavorite={onAddToFavorite}
+					onAddToCart={onAddToCart}
+				/>
+			</Route>
 
-			<Home
-				items={items}
-				cartItems={cartItems}
-				searchValue={searchValue}
-				setSearchValue={setSearchValue}
-				onChangeSearchInput={onChangeSearchInput}
-				onAddToFavorite={onAddToFavorite}
-				onAddToCart={onAddToCart}
-			/>
+			<Route path='/favorites' exact>
+				<Favorites items={favorites} onAddToFavorite={onAddToFavorite} />
+			</Route>
 		</div>
 	);
 }

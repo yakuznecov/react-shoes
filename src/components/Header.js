@@ -12,6 +12,7 @@ function Header(props) {
 					</div>
 				</div>
 			</Link>
+
 			<ul className='d-flex align-center'>
 				<li onClick={props.onClickCart} className='mr-30 cu-p'>
 					<img width={18} height={18} src='/img/cart.svg' alt='cart' />
